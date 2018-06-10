@@ -1,16 +1,17 @@
 import urllib2
-#import cv2
+from PIL import Image
 import os
 import os.path
 from os.path import basename
 from urlparse import urlsplit
 from bs4 import BeautifulSoup # for HTML parsing
 import time
-from faces import identifyFace
+#from faces import identifyFace
 import glob
 
 global urlList
 urlList = []
+
 global imgWithFacesDirectory
 global urlImgDirectory
 
@@ -25,6 +26,12 @@ if not os.path.exists(urlImgDirectory): # checks if directory exist
 # recursively download images starting from the root URL
 def downloadImages(url, level): # the root URL is level 0
     print url
+    # initialize count with number of files in processed directory
+    xno = glob.glob(os.path.join(urlImgDirectory, 'processed/','*g'))
+    count = len(xno)+1
+    # size of image to be resized
+    size = (500, 500)
+    
     global urlList
     if url in urlList: # prevent using the same URL again
         return
@@ -34,20 +41,33 @@ def downloadImages(url, level): # the root URL is level 0
     except:
         return
 
-    soup = BeautifulSoup(''.join(urlContent))
+    soup = BeautifulSoup(''.join(urlContent), "html.parser")
     # find and download all images
     imgTags = soup.findAll('img')
     for imgTag in imgTags:
         imgUrl = imgTag['src']
         try:
             imgData = urllib2.urlopen(imgUrl).read()
-            fileName = os.path.join(urlImgDirectory, basename(urlsplit(imgUrl)[2]))  # pointing to saving directory
-            output = open(fileName, 'wb')
-
+            #fileName = os.path.join(urlImgDirectory, basename(urlsplit(imgUrl)[2]))  # pointing to saving directory
+            fim = urlsplit(imgUrl)[2]
+            sim = fim.split('/')
+            im  = sim[-1]
+            filename = os.path.join(urlImgDirectory, im)
+            output = open(filename, 'wb')
+            # write incomming data from scraping
             output.write(imgData)
             output.close()
-        except:
-            pass
+            # now convert and rename file
+            image = Image.open(filename)
+            image.thumbnail(size, Image.ANTIALIAS)
+
+            filename2 = os.path.join(urlImgDirectory, 'processed/', str(count)+'.jpg')
+            image.convert('RGB').save(filename2, "JPEG")
+            # increment the counter
+            count +=1
+            # you can choose to delete the images in the url_images root if you want
+        except Exception as e:
+            print e
 
     # if there are links on the webpage then recursively repeat
     if level > 0:
@@ -62,13 +82,15 @@ def downloadImages(url, level): # the root URL is level 0
 
     data_path = os.path.join(urlImgDirectory, '*g')
     files = glob.glob(data_path)
-    for f1 in files:
-        identifyFace(f1)
+    allfiles = files[-count:]
+    for f1 in allfiles:
+        pass
+        #identifyFace(f1)
 # main
 print " "
 print ("Images downloaded would be in the working directory")
 print "E.g http://yourwebaddress.com"
-time.sleep(5)
+#time.sleep(5)
 print " "
 
 downloadImages(raw_input('Type web url and hit enter to start >> '), 1)
