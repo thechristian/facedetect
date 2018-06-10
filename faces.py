@@ -35,7 +35,7 @@ def identifyFace(imgName):
 
 img_dir = "url_Images"
 data_path = os.path.join(img_dir, '*g')
-files = glob.glob(data_path)
+#files = glob.glob(data_path)
 # data = []
-for f1 in files:
-    identifyFace(f1)
+#for f1 in files:
+#    identifyFace(f1)
