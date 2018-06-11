@@ -6,7 +6,9 @@ import  glob
 
 global ImagesWithFaces
 # global url_Images
-
+imgWithFacesDirectory = "ImagesWithFaces"  # directory to save images with faces
+if not os.path.exists(imgWithFacesDirectory):  # checks if directory exist
+    os.makedirs(imgWithFacesDirectory)
 
 def identifyFace(imgName):
     face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')  # load the required trained XML classifiers
@@ -24,17 +26,17 @@ def identifyFace(imgName):
         roi_color = img[y:y + h, x:x + w]
         eyes = eye_cascade.detectMultiScale(roi_gray)
 
-        if True:
-            os.path.join(ImagesWithFaces, img)
-        else:
-            print "not an image"
+        #if True:
+        os.path.join(ImagesWithFaces, img)
+        #else:
+        #    print "not an image"
         # detecting eyeballs
         for (ex, ey, ew, eh) in eyes:
              cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 2)
 
-
-img_dir = "url_Images"
-data_path = os.path.join(img_dir, '*g')
+#
+# img_dir = "url_Images"
+# data_path = os.path.join(img_dir, '*g')
 #files = glob.glob(data_path)
 # data = []
 #for f1 in files:
