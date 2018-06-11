@@ -6,22 +6,28 @@ from os.path import basename
 from urlparse import urlsplit
 from bs4 import BeautifulSoup # for HTML parsing
 import time
-#from faces import identifyFace
+from faces import identifyFace
 import glob
 
 global urlList
 urlList = []
 
-global imgWithFacesDirectory
-global urlImgDirectory
+#global imgWithFacesDirectory
+# global urlImgDirectory
+global processedImgDirectory
 
-imgWithFacesDirectory = "ImagesWithFaces/"  # directory to save images with faces
-if not os.path.exists(imgWithFacesDirectory):  # checks if directory exist
-    os.makedirs(imgWithFacesDirectory)
+# imgWithFacesDirectory = "ImagesWithFaces/"  # directory to save images with faces
+# if not os.path.exists(imgWithFacesDirectory):  # checks if directory exist
+#     os.makedirs(imgWithFacesDirectory)
 
 urlImgDirectory= "url_Images/" # directory to save images
-if not os.path.exists(urlImgDirectory): # checks if directory exist
-    os.makedirs(urlImgDirectory)
+# if not os.path.exists(urlImgDirectory):  # checks if directory exist
+#     os.makedirs(urlImgDirectory)
+
+# directory for processed images
+processedImgDirectory = "url_Images/processed"
+if not os.path.exists(processedImgDirectory):  # checks if directory exist
+    os.makedirs(processedImgDirectory)
 
 # recursively download images starting from the root URL
 def downloadImages(url, level): # the root URL is level 0
@@ -80,12 +86,12 @@ def downloadImages(url, level): # the root URL is level 0
                 except:
                     pass
 
-    data_path = os.path.join(urlImgDirectory, '*g')
+    data_path = os.path.join('url_Images/processed/', '*g')
     files = glob.glob(data_path)
     allfiles = files[-count:]
     for f1 in allfiles:
-        pass
-        #identifyFace(f1)
+        # pass
+        identifyFace(f1)
 # main
 print " "
 print ("Images downloaded would be in the working directory")
